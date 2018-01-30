@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "module": "es2015",
+        "noEmitHelpers": false,
+        "importHelpers": true,
+        "noResolve": false,
+        "noEmit": false,
+        "noImplicitAny": true,
+        "diagnostics": true,
+        "noEmitOnError": true,
+        "lib": ["es5", "es6", "es2015.promise"],
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "target": "es5",
+        "sourceMap": true
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
