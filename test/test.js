@@ -8,7 +8,7 @@ const lab = (exports.lab = Lab.script());
 
 lab.test('works', { timeout: 200000 }, async () => {
     const client = new Resolver.Client();
-    const pkg = await client.load('hapi');
+    const pkg = await client.load('wt-cli');
     const root = client.buildOptimalTree([pkg]);
 
     console.log(JSON.stringify(root, null, 2));

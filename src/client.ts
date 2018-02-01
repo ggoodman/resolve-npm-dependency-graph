@@ -72,7 +72,7 @@ export class Client {
             },
             httpsAgent: new HttpsAgent({ keepAlive: true }),
             responseType: 'json',
-            timeout: 2000,
+            timeout: 10000,
         });
         this.packageInstanceCache = new Map();
         this.packageLoadCache = new Map();
@@ -256,105 +256,69 @@ export class Client {
         return await this.packageLoadCache.get(pkg.id);
     }
 
-    buildOptimalTree(pkgs: [Package]): Array<DependencyTreeNode> {
-        const requiredPackages: Set<Package> = new Set();
-        const dependentGraph: Map<Package, Set<Package>> = new Map();
-        const dependentCounts: Map<Package, number> = new Map();
-        const packageSortPredicate = (a: Package, b: Package): number => {
-            const dependentsA = dependentGraph.get(a);
-            const dependentsB = dependentGraph.get(b);
-            const dependentsDelta =
-                (dependentsB ? dependentsB.size : 0) -
-                (dependentsA ? dependentsA.size : 0);
-
-            if (dependentsDelta) return dependentsDelta;
-            return a.id > b.id ? -1 : 1;
-        };
-        const visitPackage = (pkg: Package) => {
-            requiredPackages.add(pkg);
-
-            pkg.children.forEach(child => {
-                if (!dependentGraph.has(child)) {
-                    dependentCounts.set(child, 0);
-                    dependentGraph.set(child, new Set());
-                }
-
-                dependentCounts.set(child, dependentCounts.get(child) + 1);
-                dependentGraph.get(child).add(pkg);
-
-                if (!requiredPackages.has(child)) {
-                    visitPackage(child);
-                }
-            });
-        };
-
-        pkgs.forEach(visitPackage);
-
-        const optimalPaths: Map<Package, BestPath> = new Map();
-        const calculateOptimalPath = (
-            pkg: Package,
-            path: BestPath
-        ): Array<QueueItem> => {
-            const bestPath = optimalPaths.get(pkg);
-
-            if (!bestPath || bestPath.score < path.score) {
-                optimalPaths.set(pkg, path);
-
-                return Array.from(pkg.children.values()).map(
-                    (child: Package) => {
-                        return {
-                            path: path.path.concat(child),
-                            score:
-                                path.score + dependentCounts.get(child)
-                                    ? dependentCounts.get(child)
-                                    : 0,
-                            pkg: child,
-                        };
-                    }
-                );
-            }
-
-            return [];
-        };
-
-        interface QueueItem {
-            path: Array<Package>;
-            score: number;
-            pkg: Package;
-        }
-
-        const queue: Array<QueueItem> = pkgs.map(pkg => {
-            return {
-                path: [],
-                score: 0,
-                pkg,
-            };
+    buildOptimalTree(pkgs: [Package]): DependencyTreeNode {
+        const pkgNodes: Map<Package, DependencyTreeNode> = new Map();
+        const rootPkg = new Package({
+            name: '!root',
+            version: '0.0.0',
+            dependencies: {},
+            dist: {
+                integrity: '',
+                shasum: '',
+                tarball: '',
+            },
         });
-
-        while (queue.length) {
-            const item = queue.shift();
-            const childPath: BestPath = {
-                score: item.score + (dependentCounts.get(item.pkg) || 0),
-                path: item.path.concat(item.pkg),
-            };
-
-            queue.push.apply(queue, calculateOptimalPath(item.pkg, childPath));
-        }
-
-        const root = new DependencyTreeNodeType(null, null, null);
-        const sortedByDependencies = Array.from(requiredPackages.values()).sort(
-            packageSortPredicate
+        const root = new DependencyTreeNode(rootPkg);
+        const queue: Array<{ pkg: Package; parent?: Package }> = pkgs.map(
+            pkg => {
+                return { parent: rootPkg, pkg };
+            }
         );
 
-        pkgs.forEach(pkg => {
-            root.addPackage(pkg, optimalPaths);
-        });
+        pkgNodes.set(rootPkg, root);
 
-        sortedByDependencies.forEach(pkg => {
-            root.addPackage(pkg, optimalPaths);
-        });
+        while (queue.length) {
+            const { parent, pkg } = queue.shift();
 
-        return Array.from(root.children);
+            // The package has already been added
+            if (pkgNodes.has(pkg)) continue;
+
+            Array.from(pkg.children.keys())
+                .sort()
+                .forEach(childName => {
+                    const child = pkg.children.get(childName);
+
+                    queue.push({ parent: pkg, pkg: child });
+                });
+
+            const pkgNode = new DependencyTreeNode(pkg);
+
+            let conflict = false;
+            let lastParentNode;
+            let parentNode = pkgNodes.get(parent);
+
+            pkgNodes.set(pkg, pkgNode);
+
+            pkgNode.parent = parentNode;
+
+            while (parentNode) {
+                if (
+                    parentNode.pkg.children.has(pkg.name) &&
+                    parentNode.pkg.children.get(pkg.name) !== pkg
+                ) {
+                    break;
+                }
+
+                lastParentNode = parentNode;
+                parentNode = parentNode.parent;
+            }
+
+            Assert.ok(lastParentNode);
+
+            lastParentNode.addChild(pkgNode);
+        }
+
+        return root;
     }
 
     async resolve(spec: string): Promise<Dependency> {
@@ -369,56 +333,21 @@ export class Client {
     }
 }
 
-export interface DependencyTreeNode {
-    children: Set<DependencyTreeNode>;
+export class DependencyTreeNode {
+    children: Map<String, DependencyTreeNode>;
     parent: DependencyTreeNode | null;
     pkg: Package;
-    root: DependencyTreeNode | null;
-}
 
-class DependencyTreeNodeType implements DependencyTreeNode {
-    children: Set<DependencyTreeNodeType>;
-    parent: DependencyTreeNodeType | null;
-    pkg: Package;
-    root: DependencyTreeNodeType | null;
-
-    constructor(
-        root: DependencyTreeNodeType,
-        parent: DependencyTreeNodeType,
-        pkg: Package
-    ) {
-        this.children = new Set();
-        this.parent = parent;
+    constructor(pkg: Package) {
+        this.children = new Map();
+        this.parent = null;
         this.pkg = pkg;
-        this.root = root;
     }
 
-    addPackage(
-        pkg: Package,
-        optimalPaths: Map<Package, BestPath>
-    ): DependencyTreeNodeType {
-        let conflict = false;
+    addChild(child: DependencyTreeNode): DependencyTreeNode {
+        this.children.set(child.pkg.name, child);
 
-        for (let child of this.children) {
-            if (child.pkg === pkg) return child;
-            if (child.pkg.name === pkg.name) {
-                conflict = true;
-                break;
-            }
-        }
-
-        if (!conflict) {
-            const child = new DependencyTreeNodeType(this.root, this, pkg);
-
-            this.children.add(child);
-
-            return child;
-        }
-
-        const bestPath = optimalPaths.get(pkg).path;
-        const parentNode = this.addPackage(bestPath[0], optimalPaths);
-
-        return parentNode.addPackage(pkg, optimalPaths);
+        return this;
     }
 
     toJSON(): PackageAsJson {
