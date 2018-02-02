@@ -2,16 +2,18 @@
 
 const Lab = require('lab');
 
-const Client = require('../');
+const Resolver = require('../');
 
 const lab = (exports.lab = Lab.script());
 
 lab.test('works', { timeout: 200000 }, async () => {
-    const tree = await Client.resolve('wt-cli');
+    const client = new Resolver.Client();
+    const pkg = await client.load('wt-cli');
+    const root = client.buildOptimalTree([pkg]);
 
-    console.dir(tree.toJSON(), { showHidden: false, depth: Infinity, colors: true });
+    console.log(JSON.stringify(root, null, 2));
 
-    return tree;
+    return pkg;
 });
 
 if (require.main === module) {

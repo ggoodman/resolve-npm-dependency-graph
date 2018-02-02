@@ -15,7 +15,10 @@
             "outFiles": [
                 "${workspaceFolder}/dist/*.js"
             ],
-            "outputCapture": "std"
+            "outputCapture": "std",
+            "skipFiles": [
+                "node_modules/**/*.js"
+            ]
         }
     ]
 }

@@ -31,7 +31,7 @@
   "scripts": {
     "build-declarations": "tsc -d && node scripts/move-type-declarations.js",
     "build": "npm run build-declarations && rollup -c",
-    "test": "lab",
+    "test": "lab -v",
     "pretest": "npm run build"
   },
   "license": "LIL",
