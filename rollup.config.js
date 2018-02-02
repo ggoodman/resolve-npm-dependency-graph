@@ -1,5 +1,5 @@
 import sourcemaps from 'rollup-plugin-sourcemaps';
-import typescript from 'rollup-plugin-typescript2';
+import typescript from 'rollup-plugin-typescript';
 import pkg from './package.json';
 
 export default {
@@ -13,6 +13,6 @@ export default {
         typescript({
             typescript: require('typescript'),
         }),
-        sourcemaps(),
+        // sourcemaps(),
     ],
 };

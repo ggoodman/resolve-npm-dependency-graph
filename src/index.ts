@@ -1,12 +1,14 @@
 import { Client } from './client';
-import { Package } from './package';
+import { Dependency } from './dependency';
 
 export interface ResolveOptions {}
+
+export { Client };
 
 export async function resolve(
     spec: string,
     options: ResolveOptions = {}
-): Promise<Package> {
+): Promise<Dependency> {
     const client = new Client(options);
 
     return await client.resolve(spec);
