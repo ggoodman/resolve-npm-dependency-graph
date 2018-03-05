@@ -13,7 +13,8 @@
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "target": "es2017",
-        "inlineSourceMap": true
+        "inlineSourceMap": true,
+        "outDir": "dist"
     },
     "include": ["src"],
     "exclude": ["node_modules"]

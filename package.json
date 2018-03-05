@@ -14,7 +14,7 @@
   ],
   "main": "dist/resolve-npm-dependency-graph.js",
   "module": "dist/resolve-npm-dependency-graph.esm.js",
-  "types": "types/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "types"
@@ -29,12 +29,14 @@
     "rollup": "^0.52.0",
     "rollup-plugin-typescript": "^0.8.1",
     "sander": "^0.6.0",
+    "tslib": "^1.9.0",
     "typescript": "^2.7.2"
   },
   "scripts": {
-    "build-declarations": "tsc -d && node scripts/move-type-declarations.js",
+    "build-declarations": "tsc -d",
     "build": "npm run build-declarations && rollup -c",
     "test": "lab -v",
+    "prebuild": "rm -rf ./dist",
     "pretest": "npm run build"
   },
   "license": "MIT",
