@@ -9,7 +9,31 @@ const CdnLoader = require('../dist/cdnLoader');
 const Optimizer = require('../dist/optimizer');
 const Resolver = require('../');
 
-const lab = (exports.lab = Lab.script());
+const lab = (exports.lab = Lab.script({
+    cli: {
+        globals: [
+            '__extends',
+            '__assign',
+            '__rest',
+            '__decorate',
+            '__param',
+            '__metadata',
+            '__awaiter',
+            '__generator',
+            '__exportStar',
+            '__values',
+            '__read',
+            '__spread',
+            '__await',
+            '__asyncGenerator',
+            '__asyncDelegator',
+            '__asyncValues',
+            '__makeTemplateObject',
+            '__importStar',
+            '__importDefault',
+        ],
+    },
+}));
 
 lab.describe('graph flattening (optimization)', () => {
     lab.test('will lift child modules to the root', async () => {
@@ -160,7 +184,3 @@ lab.describe('graph flattening (optimization)', () => {
         });
     });
 });
-
-if (require.main === module) {
-    Lab.report([lab], { output: process.stdout, progress: 2 });
-}

@@ -7,7 +7,31 @@ const Lab = require('lab');
 
 const Resolver = require('../');
 
-const lab = (exports.lab = Lab.script());
+const lab = (exports.lab = Lab.script({
+    cli: {
+        globals: [
+            '__extends',
+            '__assign',
+            '__rest',
+            '__decorate',
+            '__param',
+            '__metadata',
+            '__awaiter',
+            '__generator',
+            '__exportStar',
+            '__values',
+            '__read',
+            '__spread',
+            '__await',
+            '__asyncGenerator',
+            '__asyncDelegator',
+            '__asyncValues',
+            '__makeTemplateObject',
+            '__importStar',
+            '__importDefault',
+        ],
+    },
+}));
 
 lab.describe('loading a dependency graph', () => {
     lab.test('works for a single mock package', async () => {
@@ -242,7 +266,3 @@ lab.describe('loading a dependency graph', () => {
         expect(grandChild.children.size).to.equal(0);
     });
 });
-
-if (require.main === module) {
-    Lab.report([lab], { output: process.stdout, progress: 2 });
-}
