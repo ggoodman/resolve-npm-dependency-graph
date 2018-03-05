@@ -15,6 +15,17 @@
   "main": "dist/resolve-npm-dependency-graph.js",
   "module": "dist/resolve-npm-dependency-graph.esm.js",
   "types": "dist/index.d.ts",
+  "author": {
+    "name": "Geoffrey Goodman",
+    "url": "https://twitter.com/filearts"
+  },
+  "bugs": {
+    "url": "https://github.com/ggoodman/resolve-npm-dependency-graph/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ggoodman/resolve-npm-dependency-graph.git"
+  },
   "files": [
     "dist",
     "types"
