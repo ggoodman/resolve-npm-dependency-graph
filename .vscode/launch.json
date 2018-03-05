@@ -7,18 +7,14 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/test/test.js",
-            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node",
+            "name": "Run tests",
+            "program": "${workspaceFolder}/node_modules/.bin/lab",
+            "args": ["-v"],
             "preLaunchTask": "build",
             "sourceMaps": true,
-            "outFiles": [
-                "${workspaceFolder}/dist/*.js"
-            ],
+            "outFiles": ["${workspaceFolder}/dist/*.js"],
             "outputCapture": "std",
-            "skipFiles": [
-                "node_modules/**/*.js"
-            ]
+            "skipFiles": ["node_modules/**/*.js"]
         }
     ]
 }

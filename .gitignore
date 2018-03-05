@@ -1,7 +1,6 @@
 .DS_Store
-.rpt2_cache
 node_modules
-*.d.ts
+!(cross-fetch).d.ts
 *.js.map
 *.ts.map
 dist

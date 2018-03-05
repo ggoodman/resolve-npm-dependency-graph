@@ -1,8 +1,4 @@
-import {
-    Client,
-    NpmPackageVersionDist,
-    NpmPackageVersionResponse,
-} from './client';
+import { Client, NpmPackageVersionDist, NpmPackageVersionResponse } from './';
 
 export interface PackageAsJson {
     name: string;
@@ -41,13 +37,24 @@ export class Package {
         return `${this.name}@${this.version}`;
     }
 
-    toJSON(): PackageAsJson {
+    toJSON(seen = new Set()): PackageAsJson {
         const dependencies: {
             [key: string]: PackageAsJson;
         } = {};
 
+        seen.add(this);
+
         this.children.forEach(child => {
-            dependencies[child.name] = child.toJSON();
+            if (seen.has(child)) {
+                // Prevent infinite recursion
+                dependencies[child.name] = {
+                    name: child.name,
+                    version: child.version,
+                    dependencies: {},
+                };
+            } else {
+                dependencies[child.name] = child.toJSON(seen);
+            }
         });
 
         return {

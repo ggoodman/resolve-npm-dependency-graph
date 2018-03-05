@@ -9,16 +9,12 @@
         "noImplicitAny": true,
         "diagnostics": true,
         "noEmitOnError": true,
-        "lib": ["es5", "es6", "es2015.promise"],
+        "lib": ["dom", "es2017", "scripthost"],
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
-        "target": "es5",
+        "target": "es2017",
         "inlineSourceMap": true
     },
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+    "include": ["src"],
+    "exclude": ["node_modules"]
 }

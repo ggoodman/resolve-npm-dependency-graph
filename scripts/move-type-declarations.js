@@ -6,6 +6,6 @@ for (const file of Glob.sync('src/**/*.js')) {
 }
 
 Sander.rimrafSync('types');
-for (const file of Glob.sync('src/**/*.d.ts')) {
+for (const file of Glob.sync('src/**/!(cross-fetch).d.ts')) {
     Sander.renameSync(file).to(file.replace(/^src/, 'types'));
 }
