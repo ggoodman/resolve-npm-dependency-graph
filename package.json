@@ -1,7 +1,7 @@
 {
   "name": "resolve-npm-dependency-graph",
   "description": "Resolve npm dependency graph in-memory and support deterministic flattening of these",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "keywords": [
     "dedupe",
     "dependency",
