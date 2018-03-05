@@ -27,6 +27,7 @@ export interface NpmPackageVersionResponse {
     version: string;
     dependencies?: { [name: string]: string };
     dist?: NpmPackageVersionDist;
+    [key: string]: any;
 }
 
 export class Client {

@@ -19,18 +19,15 @@ export class Package {
     };
     dist: NpmPackageVersionDist;
     children: Map<string, Package>;
+    raw: NpmPackageVersionResponse;
 
-    constructor({
-        name,
-        version,
-        dependencies = {},
-        dist,
-    }: NpmPackageVersionResponse) {
-        this.name = name;
-        this.version = version;
-        this.dependencies = dependencies;
-        this.dist = dist;
+    constructor(pkgInfo: NpmPackageVersionResponse) {
+        this.name = pkgInfo.name;
+        this.version = pkgInfo.version;
+        this.dependencies = pkgInfo.dependencies;
+        this.dist = pkgInfo.dist;
         this.children = new Map();
+        this.raw = pkgInfo;
     }
 
     get id(): string {
