@@ -1,6 +1,7 @@
 import { dirname, join } from 'path';
 
-import typescript from 'rollup-plugin-typescript';
+import typescript from 'typescript';
+import typescriptPlugin from 'rollup-plugin-typescript';
 
 import pkg from './package.json';
 
@@ -10,23 +11,14 @@ export default [
         output: { file: pkg.main, format: 'umd', sourcemap: true },
 
         name: pkg.name,
-        plugins: [
-            typescript({
-                typescript: require('typescript'),
-            }),
-        ],
+        plugins: [typescriptPlugin({ typescript })],
     },
     {
         input: 'src/index.ts',
         output: { file: pkg.module, format: 'es', sourcemap: true },
 
         name: pkg.name,
-        plugins: [
-            typescript({
-                target: 'es2017',
-                typescript: require('typescript'),
-            }),
-        ],
+        plugins: [typescriptPlugin({ typescript })],
     },
     {
         input: 'src/optimizer.ts',
@@ -36,11 +28,7 @@ export default [
             sourcemap: true,
         },
         name: pkg.name,
-        plugins: [
-            typescript({
-                typescript: require('typescript'),
-            }),
-        ],
+        plugins: [typescriptPlugin({ typescript })],
     },
     {
         input: 'src/optimizer.ts',
@@ -50,12 +38,7 @@ export default [
             sourcemap: true,
         },
         name: pkg.name,
-        plugins: [
-            typescript({
-                target: 'ES2017',
-                typescript: require('typescript'),
-            }),
-        ],
+        plugins: [typescriptPlugin({ typescript })],
     },
     {
         input: 'src/npmLoader.ts',
@@ -65,11 +48,7 @@ export default [
             sourcemap: true,
         },
         name: pkg.name,
-        plugins: [
-            typescript({
-                typescript: require('typescript'),
-            }),
-        ],
+        plugins: [typescriptPlugin({ typescript })],
     },
     {
         input: 'src/npmLoader.ts',
@@ -79,12 +58,7 @@ export default [
             sourcemap: true,
         },
         name: pkg.name,
-        plugins: [
-            typescript({
-                target: 'ES2017',
-                typescript: require('typescript'),
-            }),
-        ],
+        plugins: [typescriptPlugin({ typescript })],
     },
     {
         input: 'src/cdnLoader.ts',
@@ -94,11 +68,7 @@ export default [
             sourcemap: true,
         },
         name: pkg.name,
-        plugins: [
-            typescript({
-                typescript: require('typescript'),
-            }),
-        ],
+        plugins: [typescriptPlugin({ typescript })],
     },
     {
         input: 'src/cdnLoader.ts',
@@ -108,11 +78,6 @@ export default [
             sourcemap: true,
         },
         name: pkg.name,
-        plugins: [
-            typescript({
-                target: 'ES2017',
-                typescript: require('typescript'),
-            }),
-        ],
+        plugins: [typescriptPlugin({ typescript })],
     },
 ];
