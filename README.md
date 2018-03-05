@@ -2,21 +2,21 @@
 
 This module's basic functionality is to calculate the dependency graph of an npm module. It exposes a `Client` class that facilitates the caching and deduplication of in-memory `Package` objects.
 
-The module also provides support for the calculation of a (relatively) optimal and deterministic dependency tree that can be thought of as the equivalent of an npm `package-lock.json` or `yarn.lock` tree via a separate entrypoint `require('resolve-npm-dependency-graph/optimize')`.
+The module also provides support for the calculation of a (relatively) optimal and deterministic dependency tree that can be thought of as the equivalent of an npm `package-lock.json` or `yarn.lock` tree via a separate entrypoint `require('resolve-npm-dependency-graph/dist/optimize')`.
 
 ## Usage
 
 ```js
 const Resolver = require('resolve-npm-dependency-graph');
-const CdnLoader = require('resolve-npm-dependency-graph/npmLoader');
-const Optimizer = require('resolve-npm-dependency-graph/optimizer');
+const CdnLoader = require('resolve-npm-dependency-graph/dist/cdnLoader');
+const Optimizer = require('resolve-npm-dependency-graph/dist/optimizer');
 
-const npmLoader = NpmLoader.createLoader();
-const client = new Resolver.Client({ packageMetadataLoader: npmLoader });
+const cdnLoader = CdnLoader.createLoader();
+const client = new Resolver.Client({ packageMetadataLoader: cdnLoader });
 
 // Load the dependency graph of npm@5 and hapi@17
-const npmPkg = await client.resolve('npm@5');
-const hapiPkg = await client.resolve('hapi@17');
+const npmPkg = await client.load('npm@5');
+const hapiPkg = await client.load('hapi@17');
 
 // Now flatten the dependency graphs of these two modules into an optimized,
 // deduplicated tree
@@ -59,7 +59,7 @@ Represents an instance of a loaded package having the following properties:
 - `dependencies` - a mapping of dependency names to required specs (`dependencies` from `package.json`)
 - `children` - a `Map` of child package names to resolved `Package` instances
 
-### `require('resolve-npm-dependency-graph/npmLoader')`
+### `require('resolve-npm-dependency-graph/dist/npmLoader')`
 
 Provides a `packageMetadataLoader` based on the npm registry api. Since the registry does not (currently) support CORS, this loader is only suitable for use from the server-side.
 
@@ -71,7 +71,7 @@ Create an instance of the npm package metadata loader with the following optiona
 
 Returns a loader function.
 
-### `require('resolve-npm-dependency-graph/cdnLoader')`
+### `require('resolve-npm-dependency-graph/dist/cdnLoader')`
 
 Provides a `packageMetadataLoader` based on a public npm cdn like [jsDelivr](https://www.jsDelivr.com) or [unpkg](https://unpkg.com). Both of these services should be suitable for use in a browser.
 
@@ -84,7 +84,7 @@ Create an instance of the npm package metadata loader with the following optiona
 Returns a loader function.
 
 
-### `require('resolve-npm-dependency-graph/optimizer')`
+### `require('resolve-npm-dependency-graph/dist/optimizer')`
 
 Provides a tool to build an optimized, deterministic module tree suitable for planning a `node_modules` directory structure.
 
